@@ -1,0 +1,1 @@
+# hashjing-mint-testnet
