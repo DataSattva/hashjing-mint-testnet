@@ -1,0 +1,264 @@
+/* ---------- Global reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  /* Color palette */
+  --green: #28a745;
+  --green-dark: #218838;
+  --blue-link: #0077cc;
+
+  /* Layout */
+  --max-width: 800px;
+  --section-gap: 40px;
+}
+
+/* ---------- Basic document ---------- */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background: #fff;
+  height: auto;
+  overflow: auto;
+}
+html { scroll-behavior: smooth; }
+
+/* ---------- Sticky page title ---------- */
+#title {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+  padding: 12px 0;
+  text-align: center;
+  font: 700 1.8em/1 sans-serif;
+  background: #fff;
+}
+
+/* ---------- SVG wrapper ---------- */
+#svg-container {
+  margin: 20px auto;
+  display: block;
+}
+#svg-container svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ---------- Main sections ---------- */
+#mandala-section,
+#features,
+#about {
+  width: 90%;
+  max-width: var(--max-width);
+  margin: var(--section-gap) auto;
+  padding: 0 10px;
+}
+.section-title {
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 1.4em;
+}
+
+/* ---------- Controls ---------- */
+.controls {
+  text-align: center;
+}
+
+.controls textarea,
+.controls input {
+  width: calc(100% - 20px);
+  max-width: 100%;
+  padding: 6px;
+  margin: 10px 0;
+  font: 0.9em/1 monospace;
+}
+
+.controls button {
+  padding: 6px 12px;
+  margin-left: 10px;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+
+.wide-button {
+  width: calc(100% - 20px);
+  max-width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+  font: 700 1em/1 monospace;
+}
+
+/* Status text under controls */
+.status {
+  margin: 10px 0;
+  font: 0.9em/1 monospace;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+/* ---------- Radio group ---------- */
+.hash-type-inline {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 0.95em;
+  white-space: nowrap;
+}
+.hash-type-inline > span {
+  font-weight: 500;
+}
+.hash-type-inline label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+/* ---------- Generate button ---------- */
+.green-button {
+  background: var(--green); /* default light-green */
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  touch-action: manipulation;
+}
+
+/* Disabled green-button via class */
+.green-button.disabled,
+.green-button:disabled {
+  background: #a6d5b8; /* muted green */
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Don't apply hover effect when disabled */
+.green-button.disabled:hover,
+.green-button:disabled:hover {
+  background: #a6d5b8;
+}
+
+
+/* Keyboard accessibility outline */
+.green-button:focus-visible {
+  outline: 2px solid var(--green-dark);
+}
+
+/* Pressed state */
+.green-button:active {
+  background: var(--green-dark);
+}
+
+.net-label {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.7em;
+  font-family: monospace;
+  color: #444;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  padding: 2px 6px;
+  background: #fff;
+}
+
+/* ---------- Download buttons ---------- */
+#download-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0 20px;
+}
+#download-buttons button {
+  all: revert;
+  cursor: pointer;
+}
+
+/* ---------- About link ---------- */
+#about-link {
+  margin: 0 auto;
+  text-align: center;
+  font-size: 1em;
+}
+#about-link a {
+  color: var(--blue-link);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ---------- Content layout ---------- */
+#features-content,
+#about-content {
+  padding-left: 1em;
+  line-height: 1.6;
+  text-align: left;
+}
+
+/* ---------- Mobile tweaks ---------- */
+@media (max-width: 330px) {
+  #download-buttons button,
+  .wide-button,
+  .controls button {
+    font-size: 1em;
+    padding: 12px 16px;
+  }
+
+  .hash-type-inline {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .hash-type-inline span {
+    font-size: 1em;
+    margin-bottom: 4px;
+  }
+  .hash-type-inline label {
+    font-size: 1em;
+  }
+
+  .controls textarea,
+  .controls input {
+    font-size: 1em;
+  }
+
+  .status {
+    font-size: 0.95em;
+    padding: 0 10px;
+  }
+}
+
+/* ---------- Generate button dimensions ---------- */
+.controls .wide-button {
+  width: calc(100% - 20px);
+  max-width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+/* ---------- Hover effects ---------- */
+@media (hover: hover) {
+  .green-button:hover {
+    background: var(--green-dark);
+  }
+}
+
+/* ---------- Download button styles in portrait mode ---------- */
+@media (orientation: portrait) {
+  #download-buttons button {
+    font-size: 0.9em;
+    padding: 6px 12px;
+    line-height: 1.2;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    background: #fff;
+  }
+}

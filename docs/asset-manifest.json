@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/hashjing-mint-testnet/static/css/main.e3afeaac.css",
+    "main.js": "/hashjing-mint-testnet/static/js/main.9bd77a99.js",
+    "index.html": "/hashjing-mint-testnet/index.html",
+    "main.e3afeaac.css.map": "/hashjing-mint-testnet/static/css/main.e3afeaac.css.map",
+    "main.9bd77a99.js.map": "/hashjing-mint-testnet/static/js/main.9bd77a99.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e3afeaac.css",
+    "static/js/main.9bd77a99.js"
+  ]
+}
