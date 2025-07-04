@@ -10,6 +10,32 @@
   /* Layout */
   --max-width: 800px;
   --section-gap: 40px;
+
+  /* Light theme defaults */
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --card-bg: #f9f9f9;
+  --title-bg: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #121212;
+    --text-color: #f2f2f2;
+    --card-bg: #1e1e1e;
+    --title-bg: #121212;
+  }
+
+  .net-label {
+    color: #ffffff !important;
+    border-color: #888 !important;
+    background: var(--title-bg) !important;
+  }
+
+  a,
+  a:visited {
+    color: #66bfff !important;
+  }
 }
 
 /* ---------- Basic document ---------- */
@@ -17,7 +43,8 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
-  background: #fff;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   height: auto;
   overflow: auto;
 }
@@ -32,7 +59,7 @@ html { scroll-behavior: smooth; }
   padding: 12px 0;
   text-align: center;
   font: 700 1.8em/1 sans-serif;
-  background: #fff;
+  background: var(--title-bg);
 }
 
 /* ---------- SVG wrapper ---------- */
@@ -163,7 +190,7 @@ html { scroll-behavior: smooth; }
   border: 1px solid #bbb;
   border-radius: 4px;
   padding: 2px 6px;
-  background: #fff;
+  background:  var(--title-bg);
 }
 
 /* ---------- Download buttons ---------- */
@@ -179,6 +206,10 @@ html { scroll-behavior: smooth; }
 }
 
 /* ---------- About link ---------- */
+a {
+  color: var(--blue-link);
+}
+
 #about-link {
   margin: 0 auto;
   text-align: center;
@@ -247,7 +278,7 @@ html { scroll-behavior: smooth; }
 #preview-section {
   margin-top: 40px;
   padding: 20px;
-  background: #f9f9f9; /* optional soft background */
+  background: var(--card-bg); /* optional soft background */
   border-radius: 8px;
 }
 
@@ -299,6 +330,6 @@ html { scroll-behavior: smooth; }
     line-height: 1.2;
     border: 1px solid #bbb;
     border-radius: 4px;
-    background: #fff;
+    background: var(--card-bg);
   }
 }

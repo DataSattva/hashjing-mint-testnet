@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/hashjing-mint-testnet/static/css/main.a844e48f.css",
+    "main.css": "/hashjing-mint-testnet/static/css/main.50756f2e.css",
     "main.js": "/hashjing-mint-testnet/static/js/main.2bdc96f8.js",
     "index.html": "/hashjing-mint-testnet/index.html",
-    "main.a844e48f.css.map": "/hashjing-mint-testnet/static/css/main.a844e48f.css.map",
+    "main.50756f2e.css.map": "/hashjing-mint-testnet/static/css/main.50756f2e.css.map",
     "main.2bdc96f8.js.map": "/hashjing-mint-testnet/static/js/main.2bdc96f8.js.map"
   },
   "entrypoints": [
-    "static/css/main.a844e48f.css",
+    "static/css/main.50756f2e.css",
     "static/js/main.2bdc96f8.js"
   ]
 }
