@@ -14,7 +14,7 @@
   /* Light theme defaults */
   --bg-color: #ffffff;
   --text-color: #000000;
-  --card-bg: #f9f9f9;
+  --card-bg: #ffffff;
   --title-bg: #ffffff;
 }
 
@@ -22,7 +22,7 @@
   :root {
     --bg-color: #121212;
     --text-color: #f2f2f2;
-    --card-bg: #1e1e1e;
+    --card-bg: #121212;
     --title-bg: #121212;
   }
 
@@ -35,6 +35,11 @@
   a,
   a:visited {
     color: #66bfff !important;
+  }
+
+  .svg-preview {
+    border: 1px solid #686868;
+    border-radius: 0px;
   }
 }
 
