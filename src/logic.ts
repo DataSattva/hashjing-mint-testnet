@@ -19,7 +19,19 @@ export const mintNFT = async () => {
 // Read mintingEnabled from contract
 export const getMintingStatus = async (): Promise<boolean> => {
   const contract = await getContract();
-  return contract.mintingEnabled();
+
+  try {
+    // Если метод есть — вызываем как обычно
+    if (typeof contract.mintingEnabled === "function") {
+      return await contract.mintingEnabled();
+    }
+
+    // Метод отсутствует — считаем, что минт всегда разрешён
+    return true;
+  } catch (err) {
+    console.warn("mintingEnabled() not available or failed, fallback to TRUE");
+    return true;
+  }
 };
 
 // Read total supply (number of minted tokens)
@@ -29,3 +41,13 @@ export const getTotalMinted = async (): Promise<number> => {
     return Number(total);
   };
   
+// Get full tokenURI metadata (base64 JSON)
+export const getTokenURI = async (tokenId: number): Promise<any> => {
+  const contract = await getContract();
+  const uri: string = await contract.tokenURI(tokenId);
+
+  // Remove "data:application/json;base64,"
+  const base64 = uri.split(",")[1];
+  const json = atob(base64);
+  return JSON.parse(json);
+};

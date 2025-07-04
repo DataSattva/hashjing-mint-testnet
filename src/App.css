@@ -244,6 +244,46 @@ html { scroll-behavior: smooth; }
   box-sizing: border-box;
 }
 
+#preview-section {
+  margin-top: 40px;
+  padding: 20px;
+  background: #f9f9f9; /* optional soft background */
+  border-radius: 8px;
+}
+
+/* Layout for the image + traits side by side */
+.preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 16px;
+  justify-content: center; /* centers content when wrapped */
+}
+
+/* Constrain the SVG size */
+.svg-preview svg {
+  width: 280px;
+  height: auto;
+}
+
+.svg-preview {
+  display: flex;
+  justify-content: center;
+}
+
+/* Block for trait info */
+.traits {
+  max-width: 400px;
+  word-break: break-word;
+}
+
+.traits p,
+.traits li {
+  word-break: break-word; /* allow long hashes to wrap */
+  overflow-wrap: anywhere; /* aggressive fallback */
+}
+
+
 /* ---------- Hover effects ---------- */
 @media (hover: hover) {
   .green-button:hover {
