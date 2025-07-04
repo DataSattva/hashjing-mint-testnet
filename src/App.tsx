@@ -12,10 +12,12 @@ declare global {
 }
 
 // Mint start time (UTC)
-const MINT_START_TIME = new Date("2025-07-04T15:44:00Z");
+const MINT_START_TIME = new Date("2025-07-04T10:10:00Z");
+const TOTAL_MINTED = 8192;
 
 function App() {
-  const [mintingEnabled, setMintingEnabled] = useState<boolean>(false);
+  //const [mintingEnabled, setMintingEnabled] = useState<boolean>(false);
+  const [mintingEnabled, setMintingEnabled] = useState<boolean | null>(null);
 
   const [lastMintedToken, setLastMintedToken] = useState<{
     name: string;
@@ -25,7 +27,7 @@ function App() {
   } | null>(null);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [networkOk, setNetworkOk] = useState<boolean>(false);
-  const [totalMinted, setTotalMinted] = useState<number>(0);
+  const [totalMinted, setTotalMinted] = useState<number | null>(null);
   const [now, setNow] = useState<Date>(new Date());
   const [waitingToastId, setWaitingToastId] = useState<string | number | null>(null);
 
@@ -44,6 +46,16 @@ function App() {
       setWaitingToastId(null);
     }
   }, [now, mintingEnabled, waitingToastId]);
+
+  // Fetch total minted once on mount
+  useEffect(() => {
+    getTotalMinted()
+      .then(setTotalMinted)
+      .catch((err) => {
+        console.error("Failed to fetch total minted:", err);
+        setTotalMinted(0);
+      });
+  }, []);
 
   // Initial check — restore original logic
   useEffect(() => {
@@ -115,6 +127,12 @@ function App() {
 
     try {
       toast.info("🦊 Please confirm the transaction in your wallet…");
+
+      // Prevent minting if max supply is reached
+      if (totalMinted !== null && totalMinted >= TOTAL_MINTED) {
+        toast.error("❌ Max supply reached. Minting disabled.");
+        return;
+      }      
 
       const tx = await mintNFT();
 
@@ -214,13 +232,23 @@ function App() {
             !walletAddress || !networkOk || mintingEnabled === false ? "disabled" : ""
           }`}
           onClick={handleMint}
-          disabled={!walletAddress || !networkOk || mintingEnabled === false}
+          disabled={
+            !walletAddress ||
+            !networkOk ||
+            mintingEnabled === false ||
+            (totalMinted !== null && totalMinted >= TOTAL_MINTED)
+          }          
         >
-          {mintingEnabled === false ? "Minting disabled ❌" : "Mint now"}
+          {totalMinted !== null && totalMinted >= TOTAL_MINTED
+            ? "Sold out ❌"
+            : mintingEnabled === false
+            ? "Minting disabled ❌"
+            : "Mint now"}
+
         </button>
 
         <div className="status">
-          <p>Status: {totalMinted} / 8192 minted</p>
+          <p>Status: {totalMinted !== null ? `${totalMinted} / ${TOTAL_MINTED} minted` : `__ / ${TOTAL_MINTED} minted`}</p>
           <p>Price: 0.002 ETH + gas</p>
           <p>
             Contract:{" "}
