@@ -12,7 +12,7 @@ declare global {
 }
 
 // Mint start time (UTC)
-const MINT_START_TIME = new Date("2025-07-04T10:10:00Z");
+const MINT_START_TIME = new Date("2025-07-05T12:45:00Z");
 const TOTAL_MINTED = 8192;
 
 function App() {
@@ -297,19 +297,6 @@ function App() {
             </div>
           </div>
         )}
-        {/*
-        <div style={{ marginTop: "60px", textAlign: "center" }}>
-          <button
-            className="wide-button"
-            onClick={() => {
-              setMintingEnabled(true);
-              toast.success("Test: mintingEnabled = true");
-            }}
-          >
-            Test unlock
-          </button>
-        </div>
-        */}
 
         <Toaster position="bottom-center" richColors />
       </main>
