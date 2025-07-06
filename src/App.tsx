@@ -12,19 +12,21 @@ declare global {
 }
 
 // Mint start time (UTC)
-const MINT_START_TIME = new Date("2025-07-05T12:45:00Z");
+const MINT_START_TIME = new Date("2025-07-05T11:20:00Z");
 const TOTAL_MINTED = 8192;
 
 function App() {
   //const [mintingEnabled, setMintingEnabled] = useState<boolean>(false);
   const [mintingEnabled, setMintingEnabled] = useState<boolean | null>(null);
 
-  const [lastMintedToken, setLastMintedToken] = useState<{
-    name: string;
-    description: string;
-    image: string;
-    attributes: { trait_type: string; value: string | number }[];
-  } | null>(null);
+  const [mintedTokens, setMintedTokens] = useState<
+    {
+      name: string;
+      description: string;
+      image: string;
+      attributes: { trait_type: string; value: string | number }[];
+    }[]
+  >([]);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [networkOk, setNetworkOk] = useState<boolean>(false);
   const [totalMinted, setTotalMinted] = useState<number | null>(null);
@@ -89,8 +91,6 @@ function App() {
   
     return () => clearInterval(interval); // Cleanup on unmount
   }, []);
-   
-
 
   const checkNetwork = async () => {
     if (!window.ethereum) return;
@@ -153,11 +153,10 @@ function App() {
       // Fetch tokenURI for the newly minted token (IDs start from 1)
       try {
         const metadata = await getTokenURI(newTotal);
-        setLastMintedToken(metadata);
+        setMintedTokens((prev) => [metadata, ...prev]); // prepend new token
       } catch (err) {
         console.error("Failed to fetch tokenURI", err);
-        setLastMintedToken(null);
-      }
+      }      
     } catch (err: any) {
       toast.dismiss();
 
@@ -216,16 +215,18 @@ function App() {
           Each token is fully on-chain and costs 0.002 ETH to mint.
         </p>
 
-        {!walletAddress ? (
-          <button className="wide-button" onClick={connectWallet}>
-            Connect Wallet
-          </button>
-        ) : (
-          <p className="status">
-            Connected: {walletAddress.slice(0, 6)}…{walletAddress.slice(-4)}{" "}
-            ({networkOk ? "Sepolia ✅" : "Wrong network ❌"})
-          </p>
-        )}
+        <div className="status">
+          {!walletAddress ? (
+            <button className="small-button" onClick={connectWallet}>
+              Connect Wallet
+            </button>
+          ) : (
+            <p className="status">
+              Connected: {walletAddress.slice(0, 6)}…{walletAddress.slice(-4)}{" "}
+              ({networkOk ? "Sepolia ✅" : "Wrong network ❌"})
+            </p>
+          )}
+        </div>
 
         <button
           className={`wide-button green-button ${
@@ -249,6 +250,24 @@ function App() {
 
         <div className="status">
           <p>Status: {totalMinted !== null ? `${totalMinted} / ${TOTAL_MINTED} minted` : `__ / ${TOTAL_MINTED} minted`}</p>
+          <p>
+            <button
+              className="small-button"
+              onClick={() => {
+                getTotalMinted()
+                  .then((updated) => {
+                    setTotalMinted(updated);
+                    toast.success("✅ Status updated");
+                  })
+                  .catch((err) => {
+                    console.error("Failed to refresh total minted:", err);
+                    toast.error("⚠️ Failed to update status.");
+                  });
+              }}
+            >
+              🔄 Refresh status
+            </button>
+          </p>
           <p>Price: 0.002 ETH + gas</p>
           <p>
             Contract:{" "}
@@ -263,40 +282,43 @@ function App() {
           <p>Royalty: 7.5% to creator</p>
         </div>
 
-        {lastMintedToken && (
+        {mintedTokens.length > 0 && (
           <div id="preview-section">
-            <h2 className="section-title">Your Minted Mandala</h2>
-            <div className="preview-container">
-              <div
-                className="svg-preview"
-                dangerouslySetInnerHTML={{
-                  __html: atob(lastMintedToken.image.split(",")[1]),
-                }}
-              />
-              <div className="traits">
-                <h3>{lastMintedToken.name}</h3>
-                <p>{lastMintedToken.description}</p>
-                <ul>
-                  {lastMintedToken.attributes.map((attr) => (
-                    <li key={attr.trait_type}>
-                      <strong>{attr.trait_type}:</strong> {String(attr.value)}
-                    </li>
-                  ))}
-                </ul>
-                <p>
-                  View on{" "}
-                  <a
-                    href={`https://testnets.opensea.io/assets/sepolia/${CONTRACT_ADDRESS}/${totalMinted}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    OpenSea
-                  </a>
-                </p>
+            <h2 className="section-title">Your Minted Mandalas</h2>
+            {mintedTokens.map((token, idx) => (
+              <div key={idx} className="preview-container">
+                <div
+                  className="svg-preview"
+                  dangerouslySetInnerHTML={{
+                    __html: atob(token.image.split(",")[1]),
+                  }}
+                />
+                <div className="traits">
+                  <h3>{token.name}</h3>
+                  <p>{token.description}</p>
+                  <ul>
+                    {token.attributes.map((attr) => (
+                      <li key={attr.trait_type}>
+                        <strong>{attr.trait_type}:</strong> {String(attr.value)}
+                      </li>
+                    ))}
+                  </ul>
+                  <p>
+                    View on{" "}
+                    <a
+                      href={`https://testnets.opensea.io/assets/sepolia/${CONTRACT_ADDRESS}/${totalMinted}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      OpenSea
+                    </a>
+                  </p>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
         )}
+
 
         <Toaster position="bottom-center" richColors />
       </main>

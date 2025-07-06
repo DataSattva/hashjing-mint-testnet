@@ -198,6 +198,37 @@ html { scroll-behavior: smooth; }
   background:  var(--title-bg);
 }
 
+/* ---------- Small button ---------- */
+.small-button {
+  font-size: 0.8em;
+  padding: 4px 8px;
+  margin-top: 4px;
+  cursor: pointer;
+  font-family: monospace;
+  border: 1px solid #ccc;
+  background: #f2f2f2;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .small-button {
+    background: #1e1e1e;
+    color: #f2f2f2;
+    border: 1px solid #555;
+  }
+}
+
+.small-button:hover {
+  background: #e4e4e4;
+}
+
+@media (prefers-color-scheme: dark) {
+  .small-button:hover {
+    background: #2a2a2a;
+  }
+}
+
 /* ---------- Download buttons ---------- */
 #download-buttons {
   display: flex;
