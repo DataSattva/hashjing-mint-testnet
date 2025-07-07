@@ -12,7 +12,7 @@ declare global {
 }
 
 // Mint start time (UTC)
-const MINT_START_TIME = new Date("2025-07-05T11:20:00Z");
+const MINT_START_TIME = new Date("2025-07-07T13:12:00Z");
 const TOTAL_MINTED = 8192;
 
 function App() {
@@ -33,16 +33,19 @@ function App() {
   const [now, setNow] = useState<Date>(new Date());
   const [waitingToastId, setWaitingToastId] = useState<string | number | null>(null);
 
+  // toast: show only after countdown + explicit contract status = false
   useEffect(() => {
-    // Show toast after countdown expires
-    if (now >= MINT_START_TIME && mintingEnabled !== true && !waitingToastId) {
+    const afterStart = now >= MINT_START_TIME;
+
+    // show toast once when mintingEnabled is explicitly false
+    if (afterStart && mintingEnabled === false && !waitingToastId) {
       const id = toast("⏳ Waiting for network confirmation…", {
         duration: Infinity,
       });
       setWaitingToastId(id);
     }
 
-    // Dismiss toast once minting is enabled
+    // dismiss toast as soon as mint opens
     if (mintingEnabled === true && waitingToastId) {
       toast.dismiss(waitingToastId);
       setWaitingToastId(null);
@@ -59,38 +62,50 @@ function App() {
       });
   }, []);
 
-  // Initial check — restore original logic
+  // Initial check + conditional polling
   useEffect(() => {
+    let initialCheckDone = false;         // call contract once right after mount
+
     const interval = setInterval(() => {
       const current = new Date();
       setNow(current);
-  
-      // Always poll the contract regardless of countdown
-      console.log("[debug] polling getMintingStatus()");
-  
-      getMintingStatus()
-        .then((enabled) => {
-          console.log("[debug] getMintingStatus() =>", enabled);
-          if (enabled) {
+
+      const msToStart = MINT_START_TIME.getTime() - current.getTime();
+
+      // call getMintingStatus():
+      //  – always on first tick (initialCheckDone === false)
+      //  – every second during the final 60 s before mint start
+      if (!initialCheckDone || msToStart <= 60_000) {
+        initialCheckDone = true;
+
+        console.log("[debug] polling getMintingStatus()");
+        getMintingStatus()
+          .then((enabled) => {
+            console.log("[debug] getMintingStatus() =>", enabled);
+            if (enabled) {
+              setMintingEnabled(true);
+              clearInterval(interval);    // stop polling when mint is open
+              console.log("[debug] Minting enabled — polling stopped");
+            } else {
+              setMintingEnabled(false);
+            }
+          })
+          .catch((err) => {
+            console.log(
+              "[debug] getMintingStatus() failed — fallback to true:",
+              err
+            );
             setMintingEnabled(true);
-            clearInterval(interval); // Stop polling if minting is enabled
-            console.log("[debug] Minting enabled — polling stopped");
-          } else {
-            setMintingEnabled(false);
-          }
-        })
-        .catch((err) => {
-          // If the contract doesn't implement mintingEnabled(), assume it's enabled
-          console.log("[debug] getMintingStatus() failed — fallback to true:", err);
-          setMintingEnabled(true);
-          clearInterval(interval); // Stop polling on fallback
-          console.log("[debug] Minting assumed enabled — polling stopped");
-        });
-  
+            clearInterval(interval);      // stop polling on fallback
+            console.log("[debug] Minting assumed enabled — polling stopped");
+          });
+      }
     }, 1000);
-  
-    return () => clearInterval(interval); // Cleanup on unmount
+
+    return () => clearInterval(interval); // cleanup on unmount
   }, []);
+
+
 
   const checkNetwork = async () => {
     if (!window.ethereum) return;
@@ -230,22 +245,23 @@ function App() {
 
         <button
           className={`wide-button green-button ${
-            !walletAddress || !networkOk || mintingEnabled === false ? "disabled" : ""
+            !walletAddress || !networkOk || mintingEnabled !== true ? "disabled" : ""
           }`}
           onClick={handleMint}
           disabled={
             !walletAddress ||
             !networkOk ||
-            mintingEnabled === false ||
+            mintingEnabled !== true ||                         // ← was === false
             (totalMinted !== null && totalMinted >= TOTAL_MINTED)
-          }          
+          }
         >
           {totalMinted !== null && totalMinted >= TOTAL_MINTED
             ? "Sold out ❌"
+            : mintingEnabled === null                          // new state: still checking
+            ? "Checking status…"
             : mintingEnabled === false
             ? "Minting disabled ❌"
             : "Mint now"}
-
         </button>
 
         <div className="status">
